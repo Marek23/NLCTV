@@ -8,10 +8,7 @@ for iter_u = 1:2
     
     for  i = 1: length(lambda)
 
-        if(lambda(i) ~= 0)
-            output(i) = f(i);
-        else
-            sumw = sum(aff_matrix(:,i));
+        sumw = sum(aff_matrix(:,i));
             
             fDen = (lampar*lambda(i)+beta*sumw);
             
@@ -42,8 +39,7 @@ for iter_u = 1:2
                 
             end
             
-            output(i) = (sumwu*beta + lampar*lambda(i)*f(i) - beta/2*sumdb)/(fDen+eps);
-        end
+            output(i) = (sumwu*beta + lampar*(lambda(i)*f(i) - beta/2*sumdb)/(fDen+eps);
 
     end
 end

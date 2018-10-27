@@ -4,16 +4,17 @@ function [output] = weightR(im,weight,mask,mx,my,SW,f)
 output = weight;
 [nx, ny]=size(im);
 
-sigma = 0.0001;
+sigma = 0.001;
 
 
-
+%mask = ones(size(mask));
 imSWf = padarray(im,[f+SW, f+SW],'symmetric');
 maskSWf = padarray(mask,[f+SW f+SW],'symmetric');
 
-%% Used kernel
-kernel = make_kernel(f);
-kernel = kernel / sum(sum(kernel));
+%% making kernel
+sigmaKennel  = 5;
+kernel = fspecial('gaussian',2*f+1,sigmaKennel);
+
 
 %%
 for pkt=1:length(mx)
@@ -43,5 +44,6 @@ for pkt=1:length(mx)
             iter = iter+1;
         end
     end
+    output(:,ITER) = output(:,ITER)/sum(output(:,ITER));
 end
 end
