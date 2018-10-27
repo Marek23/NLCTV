@@ -1,4 +1,4 @@
-function [output] = solveU(f,ukrsh,lambda,aff_matrix,bk,dk,fpx_num,SWp_num,SW,beta)
+function [output] = solveU(f,ukrsh,lambda,aff_matrix,bk,dk,fpx_num,SWp_num,beta,SW)
 %% u
 lampar = 0.01;
 output = f;
@@ -13,7 +13,7 @@ for iter_u = 1:2
         else
             sumw = sum(aff_matrix(:,i));
             
-            fDen = (lampar*lambda(i)+beta*sumw);
+            fDen = (lampar+beta*sumw);
             
             [pom, XP, YP] = searchWindow(i,ukrsh,SW);
             aff_tmp = aff_matrix(:,i).*pom;
@@ -42,7 +42,7 @@ for iter_u = 1:2
                 
             end
             
-            output(i) = (sumwu*beta + lampar*lambda(i)*f(i) - beta/2*sumdb)/(fDen+eps);
+            output(i) = (sumwu*beta + lampar*f(i) - beta*sumdb)/(fDen+eps);
         end
 
     end

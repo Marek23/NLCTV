@@ -5,7 +5,7 @@ sp_num = size(im,1)*size(im,2);
 fpom = f;
 
 SWp_num = (2*SW +1)^2;
-sigma = 0.001; %param r from page 857 in article
+sigma = 0.01; %param r from page 857 in article
 %obraz z z ³ódk¹ ma 0.4
 %dla bungee 0.06!
 output=zeros(SWp_num,sp_num);

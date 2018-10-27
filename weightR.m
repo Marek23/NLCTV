@@ -4,7 +4,7 @@ function [output] = weightR(im,weight,mask,mx,my,SW,f)
 output = weight;
 [nx, ny]=size(im);
 
-sigma = 0.001;
+sigma = 0.01;
 
 
 %mask = ones(size(mask));

@@ -30,11 +30,11 @@ figure; imshow(fp);
 figure; imshow(lambdap)
 
 %% Params
-SW = 4; %Search window size  
-PS = 3; %Patch window size
+SW = 2; %Search window size  
+PS = 1; %Patch window size
 %% Other params
 iter_num = 20;
-beta     = 2;
+beta     = 70;
 fp_num   = size(fp1,1)*size(fp1,2);%pixels amount
 SWp_num = (2*SW +1)^2;%searchwindow pixels amount
 
@@ -57,9 +57,9 @@ for krok = 1 : iter_num
     bk3 = solveB(bk3,uk3,dk3,ukrsh3,aff_matrix3,fp_num,SWp_num,SW);
     
     %% finding u_k values
-    uk1 = solveU(f1,ukrsh1,lambda,aff_matrix1,bk1,dk1,fp_num,SWp_num,SW,beta);
-    uk2 = solveU(f2,ukrsh2,lambda,aff_matrix2,bk2,dk2,fp_num,SWp_num,SW,beta);
-    uk3 = solveU(f3,ukrsh3,lambda,aff_matrix3,bk3,dk3,fp_num,SWp_num,SW,beta);
+    uk1 = solveU(f1,ukrsh1,lambda,aff_matrix1,bk1,dk1,fp_num,SWp_num,beta,SW);
+    uk2 = solveU(f2,ukrsh2,lambda,aff_matrix2,bk2,dk2,fp_num,SWp_num,beta,SW);
+    uk3 = solveU(f3,ukrsh3,lambda,aff_matrix3,bk3,dk3,fp_num,SWp_num,beta,SW);
     
     %% actualization reshaped u
     ukrsh1 = uk1; 
