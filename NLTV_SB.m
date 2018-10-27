@@ -2,7 +2,7 @@
 clear; close all; clc
 
 %% load image
-fp = imread('Obr17min1.png');
+fp = imread('C:\MAREK\MAGISTERKA\Obrazy\flaga2.png');
 fp = im2double(fp);
 
 %% split of R, G and B
@@ -18,7 +18,7 @@ for x=1:nx
         end
     end
 end
-lambda = lambdap(:);
+lambda   = lambdap(:);
 or       = find(lambdap >0);  %piksels of original image
 m        = find(lambdap < 1); %piksels of mask 
 [mx, my] = find(lambdap < 1); %piksels of mask in x,y coordinates
@@ -30,19 +30,19 @@ figure; imshow(fp);
 figure; imshow(lambdap)
 
 %% Params
-SW = 3; %Search window size  
-PS = 1; %Patch window size
+SW = 4; %Search window size  
+PS = 3; %Patch window size
 %% Other params
-iter_num = 50;
+iter_num = 20;
 beta     = 2;
-fpx_num  = size(fp1,1)*size(fp1,2);%ilosc pikseli
-SWpx_num = (2*SW +1)^2;%ilosc pikseli z search window
+fp_num   = size(fp1,1)*size(fp1,2);%pixels amount
+SWp_num = (2*SW +1)^2;%searchwindow pixels amount
 
 %% Initialization of arguments for algorithm
 uk1    = f1;  uk2    = f2;  uk3    = f3;
 ukrsh1 = fp1; ukrsh2 = fp2; ukrsh3 = fp3;
-bk1    = zeros(SWpx_num,fpx_num); bk2 = zeros(SWpx_num,fpx_num); bk3 = zeros(SWpx_num,fpx_num);
-dk1    = zeros(SWpx_num,fpx_num); dk2 = zeros(SWpx_num,fpx_num); dk3 = zeros(SWpx_num,fpx_num);
+bk1    = zeros(SWp_num,fp_num); bk2 = zeros(SWp_num,fp_num); bk3 = zeros(SWp_num,fp_num);
+dk1    = zeros(SWp_num,fp_num); dk2 = zeros(SWp_num,fp_num); dk3 = zeros(SWp_num,fp_num);
 
 aff_matrix1 = weight(fp1,lambdap,SW,PS);
 aff_matrix2 = weight(fp2,lambdap,SW,PS);
@@ -50,27 +50,29 @@ aff_matrix3 = weight(fp3,lambdap,SW,PS);
 %% Start of algorithm iterations
 for krok = 1 : iter_num
     
-    %% Weight actualization
-    aff_matrix1 = weightR(fp1,aff_matrix1,lambdap,mx,my,SW,PS);
-    aff_matrix2 = weightR(fp2,aff_matrix2,lambdap,mx,my,SW,PS);
-    aff_matrix3 = weightR(fp3,aff_matrix3,lambdap,mx,my,SW,PS);
-    
+    krok 
     %% finding b_k values
-    bk1 = solveB(bk1,uk1,dk1,ukrsh1,aff_matrix1,fpx_num,SWpx_num,SW);
-    bk2 = solveB(bk2,uk2,dk2,ukrsh2,aff_matrix2,fpx_num,SWpx_num,SW);
-    bk3 = solveB(bk3,uk3,dk3,ukrsh3,aff_matrix3,fpx_num,SWpx_num,SW);
-    
-    %% finding BETA value
-    [BETA1, BETA2, BETA3] = solveBETA(dk1,dk2,dk3);
+    bk1 = solveB(bk1,uk1,dk1,ukrsh1,aff_matrix1,fp_num,SWp_num,SW);
+    bk2 = solveB(bk2,uk2,dk2,ukrsh2,aff_matrix2,fp_num,SWp_num,SW);
+    bk3 = solveB(bk3,uk3,dk3,ukrsh3,aff_matrix3,fp_num,SWp_num,SW);
     
     %% finding u_k values
-    uk1 = solveU(f1,ukrsh1,lambda,aff_matrix1,bk1,dk1,fpx_num,SWpx_num,SW,beta);
-    uk2 = solveU(f2,ukrsh2,lambda,aff_matrix2,bk2,dk2,fpx_num,SWpx_num,SW,beta);
-    uk3 = solveU(f3,ukrsh3,lambda,aff_matrix3,bk3,dk3,fpx_num,SWpx_num,SW,beta);
+    uk1 = solveU(f1,ukrsh1,lambda,aff_matrix1,bk1,dk1,fp_num,SWp_num,SW,beta);
+    uk2 = solveU(f2,ukrsh2,lambda,aff_matrix2,bk2,dk2,fp_num,SWp_num,SW,beta);
+    uk3 = solveU(f3,ukrsh3,lambda,aff_matrix3,bk3,dk3,fp_num,SWp_num,SW,beta);
+    
+    %% actualization reshaped u
+    ukrsh1 = uk1; 
+    ukrsh2 = uk2; 
+    ukrsh3 = uk3;
+    
+    %% finding BETA value
+    [BETA1, BETA2, BETA3] = solveBETA(dk1,dk2,dk3,beta);
+
     %% finding d_k values
-    dk1 = solveD(uk1,bk1,aff_matrix1,ukrsh1,fpx_num,SWpx_num,BETA1,SW);
-    dk2 = solveD(uk2,bk2,aff_matrix2,ukrsh2,fpx_num,SWpx_num,BETA2,SW);
-    dk3 = solveD(uk3,bk3,aff_matrix3,ukrsh3,fpx_num,SWpx_num,BETA3,SW);
+    dk1 = solveD(uk1,bk1,aff_matrix1,ukrsh1,fp_num,SWp_num,BETA1,beta,SW);
+    dk2 = solveD(uk2,bk2,aff_matrix2,ukrsh2,fp_num,SWp_num,BETA2,beta,SW);
+    dk3 = solveD(uk3,bk3,aff_matrix3,ukrsh3,fp_num,SWp_num,BETA3,beta,SW);
     
     %% reshape for uk
     ukrsh1 = reshape(uk1,nx,ny);
@@ -88,6 +90,11 @@ for krok = 1 : iter_num
     fwyn(:,:,3) = fp3;
     figure
     imshow(fwyn);
+    
+    %% Weight actualization
+    aff_matrix1 = weightR(fp1,aff_matrix1,lambdap,mx,my,SW,PS);
+    aff_matrix2 = weightR(fp2,aff_matrix2,lambdap,mx,my,SW,PS);
+    aff_matrix3 = weightR(fp3,aff_matrix3,lambdap,mx,my,SW,PS);
 end
 
 %% Visualization of final image

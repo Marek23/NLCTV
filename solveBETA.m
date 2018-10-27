@@ -1,4 +1,4 @@
-function [B1, B2, B3] = solveBETA(dk1,dk2,dk3)
+function [B1, B2, B3] = solveBETA(dk1,dk2,dk3,beta)
 eps =0.0000001;
 [SWpx_num, fpx_num ] = size(dk1);
 BETA1 = zeros(1,fpx_num);
@@ -19,7 +19,7 @@ SBETA1 = sum(BETA1);
 SBETA2 = sum(BETA2);
 SBETA3 = sum(BETA3);
 
-MBETA = sqrt(SBETA1^2 + SBETA2^2 + SBETA3^2);
+MBETA = sqrt(SBETA1^2 + SBETA2^2 + SBETA3^2) * beta;
 B1 = SBETA1/(MBETA+eps);
 B2 = SBETA2/(MBETA+eps);
 B3 = SBETA3/(MBETA+eps);
